@@ -78,8 +78,11 @@ def register():
     # User registration
     email = request.json['email']
     password = request.json['password']
+    password2 = request.json['password2']
     user_exists = user_db.search(User.email==email)
     if not user_exists:
+        if password != password2:
+            return jsonify({'error':'passwords do not match'}),400
         hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
         user_db.insert({'email': email,'password': hashed_password})
         return jsonify({'success':'user registration successful'}),201
@@ -103,5 +106,5 @@ def login():
     return jsonify({'error':'invalid password'}),400
 
 # Run the Flask application
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
